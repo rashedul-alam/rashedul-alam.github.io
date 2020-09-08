@@ -1,0 +1,49 @@
+// .proto-container {
+//     display: flex;
+//     justify-content: center;
+// }
+
+.home {
+    flex-direction: column;
+    align-items: flex-start;
+
+    h3 {
+        position: relative;
+    }
+
+    #hi {
+        font-size: 2.5rem;
+        font-family: 'Share Tech Mono', monospace;
+        font-weight: lighter;
+        color: #3D8C2E;
+        line-height: 2rem;
+        margin-left: -5rem;
+
+
+
+    }
+
+    #name {
+        font-size: 7rem;
+        font-weight: bold;
+        color: #385252;
+
+    }
+
+    #build {
+
+        font-size: 8rem;
+        font-weight: bold;
+        color: #202e2e;
+        line-height: 5.5rem;
+
+    }
+
+    #home-p {
+        font-size: 1.8rem;
+        margin: 6rem 0;
+        color: #202e2e;
+        font-weight: 500;
+    }
+
+}
