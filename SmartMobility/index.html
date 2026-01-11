@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Mobility Assistant - AI & RPA Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .map-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            height: 500px;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .distance-info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .distance-info.active {
+            display: block;
+        }
+
+        .distance-info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .distance-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .distance-detail:last-child {
+            border-bottom: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .route-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            position: relative;
+            transition: transform 0.3s;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .route-card:hover {
+            transform: translateX(5px);
+        }
+
+        .route-card.recommended {
+            border: 3px solid #4CAF50;
+            background: #f1f8f4;
+        }
+
+        .recommended-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .route-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .route-icon {
+            font-size: 36px;
+            margin-right: 15px;
+        }
+
+        .route-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .route-details {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .co2-high {
+            background: #ffebee;
+            color: #c62828;
+            font-weight: 600;
+        }
+
+        .co2-low {
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .route-info {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .savings-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .book-btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .book-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .rpa-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rpa-modal.active {
+            display: flex;
+        }
+
+        .rpa-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            animation: modalSlideIn 0.5s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .rpa-robot {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .rpa-steps {
+            text-align: left;
+            margin: 30px 0;
+        }
+
+        .rpa-step {
+            padding: 12px;
+            margin: 10px 0;
+            background: #f5f5f5;
+            border-radius: 8px;
+            opacity: 0.3;
+            transition: all 0.5s;
+        }
+
+        .rpa-step.active {
+            opacity: 1;
+            background: #e8f5e9;
+            animation: stepPulse 0.5s ease-out;
+        }
+
+        @keyframes stepPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .success-message {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 10px;
+        }
+
+        .success-message.active {
+            display: block;
+            animation: successFadeIn 0.5s ease-out;
+        }
+
+        @keyframes successFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .ticket-preview {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 2px dashed #4CAF50;
+        }
+
+        .ticket-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .ticket-detail:last-child {
+            border-bottom: none;
+        }
+
+        .close-modal-btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .close-modal-btn:hover {
+            background: #5568d3;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        .pac-container {
+            z-index: 10000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 Smart Mobility Assistant</h1>
+            <p>AI-Powered Route Planning with Real-Time Carbon Emissions | Automated RPA Booking</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <h2 style="margin-bottom: 20px; color: #667eea;">Plan Your Journey</h2>
+                
+                <div class="error-message" id="errorMessage">
+                    Please enter both origin and destination addresses
+                </div>
+
+                <div class="input-group">
+                    <label for="origin">📍 Starting Point</label>
+                    <input type="text" id="origin" placeholder="Enter your starting address">
+                </div>
+
+                <div class="input-group">
+                    <label for="destination">🎯 Destination</label>
+                    <input type="text" id="destination" placeholder="Enter your destination">
+                </div>
+
+                <div class="input-group">
+                    <label for="arriveTime">🕐 Arrive by:</label>
+                    <input type="time" id="arriveTime" value="09:00">
+                </div>
+
+                <div class="input-group">
+                    <label for="priority">⚡ What's most important?</label>
+                    <select id="priority">
+                        <option value="balanced">Balanced (Time, Cost, Environment)</option>
+                        <option value="time">Speed (Fastest route)</option>
+                        <option value="cost">Cost (Cheapest option)</option>
+                        <option value="eco">Sustainability (Lowest CO₂)</option>
+                    </select>
+                </div>
+
+                <div class="distance-info" id="distanceInfo">
+                    <h3>📏 Route Information</h3>
+                    <div class="distance-detail">
+                        <span><strong>Distance:</strong></span>
+                        <span id="routeDistance">-</span>
+                    </div>
+                    <div class="distance-detail">
+                        <span><strong>Duration (Car):</strong></span>
+                        <span id="routeDuration">-</span>
+                    </div>
+                </div>
+
+                <button class="search-btn" onclick="calculateRoute()" id="searchBtn">
+                    🔍 Calculate Routes & Emissions
+                </button>
+            </div>
+
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <h3>AI is analyzing routes...</h3>
+            <p>Checking multiple transport options and calculating CO₂ emissions</p>
+        </div>
+
+        <div class="results-section" id="results">
+            <!-- Routes will be inserted here by JavaScript -->
+        </div>
+
+        <!-- RPA Booking Modal -->
+        <div class="rpa-modal" id="rpaModal">
+            <div class="rpa-content">
+                <div class="rpa-robot">🤖</div>
+                <h2>RPA Bot Booking Your Ticket</h2>
+                <p style="color: #666; margin-bottom: 20px;">Automated booking in progress...</p>
+                
+                <div class="rpa-steps" id="rpaSteps">
+                    <div class="rpa-step">✓ Opening transit booking website...</div>
+                    <div class="rpa-step">✓ Selecting route and time...</div>
+                    <div class="rpa-step">✓ Filling passenger details...</div>
+                    <div class="rpa-step">✓ Processing payment...</div>
+                    <div class="rpa-step">✓ Generating mobile ticket...</div>
+                </div>
+
+                <div class="success-message" id="successMessage">
+                    <h3>✅ Booking Successful!</h3>
+                    <p>Your ticket has been sent to your phone</p>
+                    
+                    <div class="ticket-preview">
+                        <h3>🎫 Your Ticket</h3>
+                        <div class="ticket-detail">
+                            <span>Route:</span>
+                            <span id="ticketRoute">Bus #47</span>
+                        </div>
+                        <div class="ticket-detail">
+                            <span>Departure:</span>
+                            <span id="ticketTime">8:25 AM</span>
+                        </div>
+                        <div class="ticket-detail">
+                            <span>From:</span>
+                            <span id="ticketOrigin">-</span>
+                        </div>
+                        <div class="ticket-detail">
+                            <span>To:</span>
+                            <span id="ticketDestination">-</span>
+                        </div>
+                        <div class="ticket-detail">
+                            <span>Price:</span>
+                            <span id="ticketPrice">€2.50</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="close-modal-btn" onclick="closeRPAModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Carbon emission factors (kg CO2 per km per passenger)
+        const emissionFactors = {
+            car: 0.192,      // Average car
+            bus: 0.089,      // Public bus
+            bicycle: 0,      // Zero emissions
+            walking: 0,      // Zero emissions
+            ebike: 0.005     // E-bike (considering electricity)
+        };
+
+        // Cost factors (€ per km)
+        const costFactors = {
+            car: 0.35,       // Fuel + maintenance + parking
+            bus: 0.12,       // Public transit per km
+            bicycle: 0,      // Free
+            walking: 0,      // Free
+            ebike: 0.02      // Electricity cost
+        };
+
+        // Speed factors (km/h average)
+        const speedFactors = {
+            car: 40,
+            bus: 25,
+            bicycle: 15,
+            walking: 5,
+            ebike: 20
+        };
+
+        let map;
+        let directionsService;
+        let directionsRenderer;
+        let distanceMatrixService;
+        let autocompleteOrigin;
+        let autocompleteDestination;
+        let currentDistance = 0; // in km
+        let currentDuration = 0; // in minutes
+
+        function initMap() {
+            // Initialize map centered on Europe
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 6,
+                center: { lat: 50.8503, lng: 4.3517 }, // Brussels
+                mapTypeControl: true,
+                streetViewControl: false,
+                fullscreenControl: true
+            });
+
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
+                suppressMarkers: false
+            });
+            distanceMatrixService = new google.maps.DistanceMatrixService();
+
+            // Initialize autocomplete
+            autocompleteOrigin = new google.maps.places.Autocomplete(
+                document.getElementById('origin'),
+                { types: ['geocode'] }
+            );
+
+            autocompleteDestination = new google.maps.places.Autocomplete(
+                document.getElementById('destination'),
+                { types: ['geocode'] }
+            );
+        }
+
+        function calculateRoute() {
+            const origin = document.getElementById('origin').value;
+            const destination = document.getElementById('destination').value;
+
+            // Validate inputs
+            if (!origin || !destination) {
+                document.getElementById('errorMessage').classList.add('active');
+                setTimeout(() => {
+                    document.getElementById('errorMessage').classList.remove('active');
+                }, 3000);
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('results').classList.remove('active');
+            document.getElementById('searchBtn').disabled = true;
+
+            // Calculate route using Directions API
+            const request = {
+                origin: origin,
+                destination: destination,
+                travelMode: google.maps.TravelMode.DRIVING,
+                unitSystem: google.maps.UnitSystem.METRIC
+            };
+
+            directionsService.route(request, function(result, status) {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(result);
+                    
+                    const route = result.routes[0].legs[0];
+                    currentDistance = route.distance.value / 1000; // Convert to km
+                    currentDuration = route.duration.value / 60; // Convert to minutes
+
+                    // Update distance info
+                    document.getElementById('routeDistance').textContent = 
+                        route.distance.text;
+                    document.getElementById('routeDuration').textContent = 
+                        route.duration.text;
+                    document.getElementById('distanceInfo').classList.add('active');
+
+                    // Generate routes with real data
+                    setTimeout(() => {
+                        generateRoutes(origin, destination);
+                    }, 1500);
+                } else {
+                    alert('Could not calculate route: ' + status);
+                    document.getElementById('loading').classList.remove('active');
+                    document.getElementById('searchBtn').disabled = false;
+                }
+            });
+        }
+
+        function generateRoutes(origin, destination) {
+            const distance = currentDistance;
+            const arriveTime = document.getElementById('arriveTime').value;
+            
+            // Calculate emissions and costs for each mode
+            const routes = [
+                {
+                    icon: '🚌',
+                    name: 'Public Bus',
+                    time: Math.round(distance / speedFactors.bus * 60) + ' min',
+                    timeValue: distance / speedFactors.bus * 60,
+                    cost: '€' + (distance * costFactors.bus).toFixed(2),
+                    costValue: distance * costFactors.bus,
+                    co2: (distance * emissionFactors.bus).toFixed(2) + ' kg',
+                    co2Value: distance * emissionFactors.bus,
+                    co2Level: 'low',
+                    departure: calculateDepartureTime(arriveTime, distance / speedFactors.bus * 60),
+                    details: `Distance: ${distance.toFixed(1)} km. Regular service with stops.`,
+                    savings: `💚 Saves ${((distance * emissionFactors.car) - (distance * emissionFactors.bus)).toFixed(2)} kg CO₂ compared to driving`,
+                    recommended: true,
+                    needsTicket: true
+                },
+                {
+                    icon: '🚗',
+                    name: 'Personal Car',
+                    time: Math.round(currentDuration) + ' min',
+                    timeValue: currentDuration,
+                    cost: '€' + (distance * costFactors.car).toFixed(2),
+                    costValue: distance * costFactors.car,
+                    co2: (distance * emissionFactors.car).toFixed(2) + ' kg',
+                    co2Value: distance * emissionFactors.car,
+                    co2Level: 'high',
+                    departure: calculateDepartureTime(arriveTime, currentDuration),
+                    details: `Distance: ${distance.toFixed(1)} km. Includes fuel and parking costs.`,
+                    savings: null,
+                    recommended: false,
+                    needsTicket: false
+                },
+                {
+                    icon: '🚴',
+                    name: 'Bicycle',
+                    time: Math.round(distance / speedFactors.bicycle * 60) + ' min',
+                    timeValue: distance / speedFactors.bicycle * 60,
+                    cost: '€0',
+                    costValue: 0,
+                    co2: '0 kg',
+                    co2Value: 0,
+                    co2Level: 'low',
+                    departure: calculateDepartureTime(arriveTime, distance / speedFactors.bicycle * 60),
+                    details: `Distance: ${distance.toFixed(1)} km. Great for fitness and environment!`,
+                    savings: `🌱 Zero emissions! Saves ${(distance * emissionFactors.car).toFixed(2)} kg CO₂`,
+                    recommended: distance < 10,
+                    needsTicket: false
+                }
+            ];
+
+            // Add walking option if distance is reasonable
+            if (distance < 8) {
+                routes.push({
+                    icon: '🚶',
+                    name: 'Walking',
+                    time: Math.round(distance / speedFactors.walking * 60) + ' min',
+                    timeValue: distance / speedFactors.walking * 60,
+                    cost: '€0',
+                    costValue: 0,
+                    co2: '0 kg',
+                    co2Value: 0,
+                    co2Level: 'low',
+                    departure: calculateDepartureTime(arriveTime, distance / speedFactors.walking * 60),
+                    details: `Distance: ${distance.toFixed(1)} km. Healthy and eco-friendly!`,
+                    savings: `🌱 Zero emissions! Saves ${(distance * emissionFactors.car).toFixed(2)} kg CO₂`,
+                    recommended: false,
+                    needsTicket: false
+                });
+            }
+
+            // Sort routes based on priority
+            const priority = document.getElementById('priority').value;
+            sortRoutesByPriority(routes, priority);
+
+            // Display routes
+            document.getElementById('loading').classList.remove('active');
+            document.getElementById('searchBtn').disabled = false;
+            displayRoutes(routes, origin, destination);
+        }
+
+        function sortRoutesByPriority(routes, priority) {
+            switch(priority) {
+                case 'time':
+                    routes.sort((a, b) => a.timeValue - b.timeValue);
+                    routes[0].recommended = true;
+                    break;
+                case 'cost':
+                    routes.sort((a, b) => a.costValue - b.costValue);
+                    routes[0].recommended = true;
+                    break;
+                case 'eco':
+                    routes.sort((a, b) => a.co2Value - b.co2Value);
+                    routes[0].recommended = true;
+                    break;
+                default: // balanced
+                    // Already set bus as recommended
+                    break;
+            }
+        }
+
+        function calculateDepartureTime(arriveTime, durationMinutes) {
+            const [hours, minutes] = arriveTime.split(':').map(Number);
+            const arriveDate = new Date();
+            arriveDate.setHours(hours, minutes, 0);
+            
+            const departDate = new Date(arriveDate.getTime() - (durationMinutes * 60000));
+            
+            return departDate.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+        }
+
+        function displayRoutes(routes, origin, destination) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            
+            routes.forEach((route, index) => {
+                setTimeout(() => {
+                    const routeCard = createRouteCard(route, origin, destination);
+                    resultsDiv.appendChild(routeCard);
+                }, index * 300);
+            });
+
+            resultsDiv.classList.add('active');
+        }
+
+        function createRouteCard(route, origin, destination) {
+            const card = document.createElement('div');
+            card.className = 'route-card' + (route.recommended ? ' recommended' : '');
+            
+            card.innerHTML = `
+                ${route.recommended ? '<div class="recommended-badge">✅ AI RECOMMENDED</div>' : ''}
+                
+                <div class="route-header">
+                    <div class="route-icon">${route.icon}</div>
+                    <div class="route-name">${route.name}</div>
+                </div>
+
+                <div class="route-details">
+                    <div class="detail-item">
+                        <span>⏱️</span>
+                        <span>${route.time}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>💰</span>
+                        <span>${route.cost}</span>
+                    </div>
+                    <div class="detail-item ${route.co2Level === 'high' ? 'co2-high' : 'co2-low'}">
+                        <span>${route.co2Level === 'high' ? '⚠️' : '🌍'}</span>
+                        <span>${route.co2}</span>
+                    </div>
+                </div>
+
+                <div class="route-info">
+                    🕐 Depart: ${route.departure}<br>
+                    ${route.details}
+                </div>
+
+                ${route.savings ? `<div class="savings-badge">${route.savings}</div>` : ''}
+
+                ${route.needsTicket ? `
+                    <button class="book-btn" onclick='bookTicket(${JSON.stringify(route.name)}, ${JSON.stringify(route.departure)}, ${JSON.stringify(route.cost)}, ${JSON.stringify(origin)}, ${JSON.stringify(destination)})'>
+                        📱 Book Automatically with RPA
+                    </button>
+                ` : ''}
+            `;
+
+            return card;
+        }
+
+        function bookTicket(routeName, time, cost, origin, destination) {
+            // Open RPA modal
+            document.getElementById('rpaModal').classList.add('active');
+            document.getElementById('successMessage').classList.remove('active');
+            
+            // Update ticket details
+            document.getElementById('ticketRoute').textContent = routeName;
+            document.getElementById('ticketTime').textContent = time;
+            document.getElementById('ticketPrice').textContent = cost;
+            document.getElementById('ticketOrigin').textContent = origin;
+            document.getElementById('ticketDestination').textContent = destination;
+
+            // Reset steps
+            const steps = document.querySelectorAll('.rpa-step');
+            steps.forEach(step => step.classList.remove('active'));
+
+            // Animate RPA steps
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    step.classList.add('active');
+                    step.style.animationDelay = `${index * 0.1}s`;
+                    
+                    // Show success after last step
+                    if (index === steps.length - 1) {
+                        setTimeout(() => {
+                            document.getElementById('successMessage').classList.add('active');
+                        }, 500);
+                    }
+                }, index * 800);
+            });
+        }
+
+        function closeRPAModal() {
+            document.getElementById('rpaModal').classList.remove('active');
+        }
+    </script>
+
+    <!-- IMPORTANT: Replace YOUR_API_KEY with your actual Google Maps API key -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRlHxz1cBfuhbj33_c4TURs6A3ZPpBioE&libraries=places&callback=initMap" async defer></script>
+</body>
+</html>
