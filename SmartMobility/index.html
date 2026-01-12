@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Mobility Assistant - AI & RPA Demo</title>
+    <title>Smart Mobility Assistant - DING Integration</title>
     <style>
         * {
             margin: 0;
@@ -42,6 +42,127 @@
         .header p {
             color: #666;
             font-size: 16px;
+        }
+
+        .ding-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #e31e24 0%, #ff6b6b 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* CO2 Statistics Dashboard */
+        .stats-dashboard {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .stats-dashboard.active {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card.green {
+            background: linear-gradient(135deg, #4CAF50 0%, #2e7d32 100%);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .history-section {
+            margin-top: 20px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .history-item {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .history-item.car-route {
+            border-left-color: #f44336;
+        }
+
+        .history-date {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .history-details {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .clear-history-btn {
+            padding: 8px 15px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .clear-history-btn:hover {
+            background: #d32f2f;
+        }
+
+        .export-btn {
+            padding: 8px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .export-btn:hover {
+            background: #5568d3;
         }
 
         .main-content {
@@ -281,6 +402,12 @@
             font-weight: 600;
         }
 
+        .co2-medium {
+            background: #fff3e0;
+            color: #ef6c00;
+            font-weight: 600;
+        }
+
         .route-info {
             color: #666;
             font-size: 14px;
@@ -301,7 +428,7 @@
         .book-btn {
             width: 100%;
             padding: 12px;
-            background: #667eea;
+            background: #e31e24;
             color: white;
             border: none;
             border-radius: 8px;
@@ -312,136 +439,15 @@
         }
 
         .book-btn:hover {
-            background: #5568d3;
+            background: #c01a1f;
             transform: translateY(-2px);
         }
 
-        .rpa-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .rpa-modal.active {
-            display: flex;
-        }
-
-        .rpa-content {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            animation: modalSlideIn 0.5s ease-out;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .rpa-robot {
-            font-size: 80px;
-            margin-bottom: 20px;
-            animation: bounce 1s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .rpa-steps {
-            text-align: left;
-            margin: 30px 0;
-        }
-
-        .rpa-step {
-            padding: 12px;
-            margin: 10px 0;
-            background: #f5f5f5;
-            border-radius: 8px;
-            opacity: 0.3;
-            transition: all 0.5s;
-        }
-
-        .rpa-step.active {
-            opacity: 1;
-            background: #e8f5e9;
-            animation: stepPulse 0.5s ease-out;
-        }
-
-        @keyframes stepPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .success-message {
-            display: none;
-            margin-top: 20px;
-            padding: 20px;
-            background: #e8f5e9;
-            border-radius: 10px;
-        }
-
-        .success-message.active {
-            display: block;
-            animation: successFadeIn 0.5s ease-out;
-        }
-
-        @keyframes successFadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .ticket-preview {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 15px;
-            border: 2px dashed #4CAF50;
-        }
-
-        .ticket-detail {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .ticket-detail:last-child {
-            border-bottom: none;
-        }
-
-        .close-modal-btn {
-            width: 100%;
-            padding: 12px;
+        .book-btn.secondary {
             background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 20px;
         }
 
-        .close-modal-btn:hover {
+        .book-btn.secondary:hover {
             background: #5568d3;
         }
 
@@ -461,13 +467,205 @@
         .pac-container {
             z-index: 10000;
         }
+
+        .price-info {
+            background: #fff3cd;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .zone-indicator {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        /* Journey Details Modal */
+        .journey-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .journey-modal.active {
+            display: flex;
+        }
+
+        .journey-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            animation: modalSlideIn 0.5s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .journey-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .journey-header h2 {
+            color: #e31e24;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .journey-details-box {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .journey-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .journey-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .journey-detail-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .journey-detail-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .copy-notice {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #2e7d32;
+            font-size: 14px;
+            display: none;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn.primary {
+            background: #e31e24;
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            background: #c01a1f;
+        }
+
+        .modal-btn.secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .modal-btn.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .instructions-box {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #856404;
+        }
+
+        .instructions-box ol {
+            margin: 10px 0 0 20px;
+        }
+
+        .instructions-box li {
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🌍 Smart Mobility Assistant</h1>
-            <p>AI-Powered Route Planning with Real-Time Carbon Emissions | Automated RPA Booking</p>
+            <p>AI-Powered Route Planning with Real-Time Carbon Emissions</p>
+            <div class="ding-badge">🚌 Powered by DING Tariff System</div>
+        </div>
+
+        <!-- CO2 Statistics Dashboard -->
+        <div class="stats-dashboard" id="statsDashboard">
+            <h2 style="margin-bottom: 20px; color: #667eea;">📊 Your Environmental Impact</h2>
+            <div class="stats-grid">
+                <div class="stat-card green">
+                    <div class="stat-label">Total CO₂ Saved</div>
+                    <div class="stat-value" id="totalSaved">0 kg</div>
+                    <div class="stat-label">by choosing eco-friendly routes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Searches</div>
+                    <div class="stat-value" id="totalSearches">0</div>
+                    <div class="stat-label">route comparisons made</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Eco-Friendly Choices</div>
+                    <div class="stat-value" id="ecoChoices">0</div>
+                    <div class="stat-label">times you chose green transport</div>
+                </div>
+            </div>
+
+            <div class="history-section">
+                <div class="history-header">
+                    <h3>🕐 Recent Journey History</h3>
+                    <div>
+                        <button class="export-btn" onclick="exportData()">📥 Export Data</button>
+                        <button class="clear-history-btn" onclick="clearHistory()">🗑️ Clear History</button>
+                    </div>
+                </div>
+                <div id="historyList"></div>
+            </div>
         </div>
 
         <div class="main-content">
@@ -528,79 +726,130 @@
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <h3>AI is analyzing routes...</h3>
-            <p>Checking multiple transport options and calculating CO₂ emissions</p>
+            <p>Checking multiple transport options and calculating CO₂ emissions with DING pricing</p>
         </div>
 
         <div class="results-section" id="results">
             <!-- Routes will be inserted here by JavaScript -->
         </div>
 
-        <!-- RPA Booking Modal -->
-        <div class="rpa-modal" id="rpaModal">
-            <div class="rpa-content">
-                <div class="rpa-robot">🤖</div>
-                <h2>RPA Bot Booking Your Ticket</h2>
-                <p style="color: #666; margin-bottom: 20px;">Automated booking in progress...</p>
-                
-                <div class="rpa-steps" id="rpaSteps">
-                    <div class="rpa-step">✓ Opening transit booking website...</div>
-                    <div class="rpa-step">✓ Selecting route and time...</div>
-                    <div class="rpa-step">✓ Filling passenger details...</div>
-                    <div class="rpa-step">✓ Processing payment...</div>
-                    <div class="rpa-step">✓ Generating mobile ticket...</div>
+        <!-- Journey Details Modal -->
+        <div class="journey-modal" id="journeyModal">
+            <div class="journey-content">
+                <div class="journey-header">
+                    <h2>🚌 DING Journey Details</h2>
+                    <p style="color: #666;">Ready to book your ticket</p>
                 </div>
 
-                <div class="success-message" id="successMessage">
-                    <h3>✅ Booking Successful!</h3>
-                    <p>Your ticket has been sent to your phone</p>
-                    
-                    <div class="ticket-preview">
-                        <h3>🎫 Your Ticket</h3>
-                        <div class="ticket-detail">
-                            <span>Route:</span>
-                            <span id="ticketRoute">Bus #47</span>
-                        </div>
-                        <div class="ticket-detail">
-                            <span>Departure:</span>
-                            <span id="ticketTime">8:25 AM</span>
-                        </div>
-                        <div class="ticket-detail">
-                            <span>From:</span>
-                            <span id="ticketOrigin">-</span>
-                        </div>
-                        <div class="ticket-detail">
-                            <span>To:</span>
-                            <span id="ticketDestination">-</span>
-                        </div>
-                        <div class="ticket-detail">
-                            <span>Price:</span>
-                            <span id="ticketPrice">€2.50</span>
-                        </div>
+                <div class="instructions-box">
+                    <strong>📋 How to book:</strong>
+                    <ol>
+                        <li>Click "Go to DING Website" below</li>
+                        <li>Enter your journey details on the DING trip planner</li>
+                        <li>Select your preferred departure time</li>
+                        <li>Purchase your ticket online or via mobile app</li>
+                    </ol>
+                </div>
+
+                <div class="journey-details-box">
+                    <div class="journey-detail-row">
+                        <span class="journey-detail-label">From:</span>
+                        <span class="journey-detail-value" id="modalOrigin">-</span>
+                    </div>
+                    <div class="journey-detail-row">
+                        <span class="journey-detail-label">To:</span>
+                        <span class="journey-detail-value" id="modalDestination">-</span>
+                    </div>
+                    <div class="journey-detail-row">
+                        <span class="journey-detail-label">Arrive by:</span>
+                        <span class="journey-detail-value" id="modalTime">-</span>
+                    </div>
+                    <div class="journey-detail-row">
+                        <span class="journey-detail-label">Date:</span>
+                        <span class="journey-detail-value" id="modalDate">-</span>
+                    </div>
+                    <div class="journey-detail-row">
+                        <span class="journey-detail-label">Estimated Price:</span>
+                        <span class="journey-detail-value" id="modalPrice">-</span>
+                    </div>
+                    <div class="journey-detail-row">
+                        <span class="journey-detail-label">Tariff Zones:</span>
+                        <span class="journey-detail-value" id="modalZones">-</span>
                     </div>
                 </div>
 
-                <button class="close-modal-btn" onclick="closeRPAModal()">Close</button>
+                <div class="modal-buttons">
+                    <button class="modal-btn secondary" onclick="closeJourneyModal()">Cancel</button>
+                    <button class="modal-btn primary" onclick="openDINGWebsite()">Go to DING Website →</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Carbon emission factors (kg CO2 per km per passenger)
-        const emissionFactors = {
-            car: 0.192,      // Average car
-            bus: 0.089,      // Public bus
-            bicycle: 0,      // Zero emissions
-            walking: 0,      // Zero emissions
-            ebike: 0.005     // E-bike (considering electricity)
+        // DING Pricing Structure (Valid from January 2025)
+        const DING_PRICING = {
+            // Pricing per tariff zone (Tarifwaben)
+            singleTicket: {
+                1: 2.70,
+                2: 3.90,
+                3: 5.00,
+                4: 6.00,
+                5: 7.00,
+                6: 8.10,
+                7: 9.20,
+                8: 10.40,
+                9: 11.50,
+                10: 12.60,
+                11: 13.70
+            },
+            dayTicketSingle: {
+                1: 4.70,
+                2: 6.70,
+                3: 8.80,
+                4: 10.60,
+                5: 12.60,
+                6: 14.80,
+                7: 16.60,
+                8: 18.60,
+                9: 20.60,
+                10: 22.60,
+                11: 24.70
+            },
+            monthlyTicket: {
+                1: 62.30,
+                2: 85.70,
+                3: 109.10,
+                4: 132.70,
+                5: 156.50,
+                6: 180.90,
+                7: 205.30,
+                8: 229.80,
+                9: 254.40,
+                10: 279.30,
+                11: 304.80
+            },
+            // Special tickets
+            shortTrip: 2.10, // Kurzstreckenticket (4 stops)
+            ulm_neuulm_single: 3.20,
+            ulm_neuulm_day: 5.90
         };
 
-        // Cost factors (€ per km)
+        // Carbon emission factors (kg CO2 per km per passenger)
+        const emissionFactors = {
+            car: 0.192,
+            bus: 0.089,
+            bicycle: 0,
+            walking: 0,
+            ebike: 0.005
+        };
+
+        // Cost factors for car (€ per km)
         const costFactors = {
-            car: 0.35,       // Fuel + maintenance + parking
-            bus: 0.12,       // Public transit per km
-            bicycle: 0,      // Free
-            walking: 0,      // Free
-            ebike: 0.02      // Electricity cost
+            car: 0.35,
+            bicycle: 0,
+            walking: 0,
+            ebike: 0.02
         };
 
         // Speed factors (km/h average)
@@ -618,14 +867,20 @@
         let distanceMatrixService;
         let autocompleteOrigin;
         let autocompleteDestination;
-        let currentDistance = 0; // in km
-        let currentDuration = 0; // in minutes
+        let currentDistance = 0;
+        let currentDuration = 0;
+        let currentRouteData = null;
+        let originAddress = '';
+        let destinationAddress = '';
+
+        // LocalStorage key for storing journey history
+        const STORAGE_KEY = 'mobility_journey_history';
 
         function initMap() {
-            // Initialize map centered on Europe
+            // Center on Ulm, Germany (DING network center)
             map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 6,
-                center: { lat: 50.8503, lng: 4.3517 }, // Brussels
+                zoom: 10,
+                center: { lat: 48.4011, lng: 9.9876 }, // Ulm coordinates
                 mapTypeControl: true,
                 streetViewControl: false,
                 fullscreenControl: true
@@ -638,23 +893,77 @@
             });
             distanceMatrixService = new google.maps.DistanceMatrixService();
 
-            // Initialize autocomplete
+            // Autocomplete focused on DING network region
             autocompleteOrigin = new google.maps.places.Autocomplete(
                 document.getElementById('origin'),
-                { types: ['geocode'] }
+                { 
+                    types: ['geocode'],
+                    componentRestrictions: { country: 'de' }
+                }
             );
 
             autocompleteDestination = new google.maps.places.Autocomplete(
                 document.getElementById('destination'),
-                { types: ['geocode'] }
+                { 
+                    types: ['geocode'],
+                    componentRestrictions: { country: 'de' }
+                }
             );
+
+            // Load and display statistics on page load
+            loadStatistics();
+        }
+
+        function calculateTariffZones(distanceKm) {
+            // Simplified zone calculation: approximately 5km per zone
+            // This is an approximation - actual DING zones depend on geography
+            if (distanceKm <= 5) return 1;
+            if (distanceKm <= 10) return 2;
+            if (distanceKm <= 15) return 3;
+            if (distanceKm <= 20) return 4;
+            if (distanceKm <= 25) return 5;
+            if (distanceKm <= 30) return 6;
+            if (distanceKm <= 35) return 7;
+            if (distanceKm <= 40) return 8;
+            if (distanceKm <= 45) return 9;
+            if (distanceKm <= 50) return 10;
+            return 11;
+        }
+
+        function getDINGPrice(distanceKm, ticketType = 'single') {
+            const zones = calculateTariffZones(distanceKm);
+            
+            // Short trip special case (up to 4 stops, approximately 2-3km)
+            if (distanceKm <= 3 && ticketType === 'single') {
+                return { price: DING_PRICING.shortTrip, zones: 'Short Trip', description: '4 stops or less' };
+            }
+
+            let price;
+            let description = `${zones} zone${zones > 1 ? 's' : ''}`;
+
+            switch(ticketType) {
+                case 'single':
+                    price = DING_PRICING.singleTicket[zones] || DING_PRICING.singleTicket[11];
+                    break;
+                case 'day':
+                    price = DING_PRICING.dayTicketSingle[zones] || DING_PRICING.dayTicketSingle[11];
+                    description = `Day ticket - ${zones} zone${zones > 1 ? 's' : ''}`;
+                    break;
+                case 'monthly':
+                    price = DING_PRICING.monthlyTicket[zones] || DING_PRICING.monthlyTicket[11];
+                    description = `Monthly pass - ${zones} zone${zones > 1 ? 's' : ''}`;
+                    break;
+                default:
+                    price = DING_PRICING.singleTicket[zones] || DING_PRICING.singleTicket[11];
+            }
+
+            return { price, zones, description };
         }
 
         function calculateRoute() {
             const origin = document.getElementById('origin').value;
             const destination = document.getElementById('destination').value;
 
-            // Validate inputs
             if (!origin || !destination) {
                 document.getElementById('errorMessage').classList.add('active');
                 setTimeout(() => {
@@ -663,12 +972,13 @@
                 return;
             }
 
-            // Show loading
+            originAddress = origin;
+            destinationAddress = destination;
+
             document.getElementById('loading').classList.add('active');
             document.getElementById('results').classList.remove('active');
             document.getElementById('searchBtn').disabled = true;
 
-            // Calculate route using Directions API
             const request = {
                 origin: origin,
                 destination: destination,
@@ -681,17 +991,13 @@
                     directionsRenderer.setDirections(result);
                     
                     const route = result.routes[0].legs[0];
-                    currentDistance = route.distance.value / 1000; // Convert to km
-                    currentDuration = route.duration.value / 60; // Convert to minutes
+                    currentDistance = route.distance.value / 1000;
+                    currentDuration = route.duration.value / 60;
 
-                    // Update distance info
-                    document.getElementById('routeDistance').textContent = 
-                        route.distance.text;
-                    document.getElementById('routeDuration').textContent = 
-                        route.duration.text;
+                    document.getElementById('routeDistance').textContent = route.distance.text;
+                    document.getElementById('routeDuration').textContent = route.duration.text;
                     document.getElementById('distanceInfo').classList.add('active');
 
-                    // Generate routes with real data
                     setTimeout(() => {
                         generateRoutes(origin, destination);
                     }, 1500);
@@ -707,23 +1013,30 @@
             const distance = currentDistance;
             const arriveTime = document.getElementById('arriveTime').value;
             
-            // Calculate emissions and costs for each mode
+            // Get DING pricing
+            const singleTicket = getDINGPrice(distance, 'single');
+            const dayTicket = getDINGPrice(distance, 'day');
+
             const routes = [
                 {
                     icon: '🚌',
-                    name: 'Public Bus',
+                    name: 'DING Public Bus',
                     time: Math.round(distance / speedFactors.bus * 60) + ' min',
                     timeValue: distance / speedFactors.bus * 60,
-                    cost: '€' + (distance * costFactors.bus).toFixed(2),
-                    costValue: distance * costFactors.bus,
+                    cost: '€' + singleTicket.price.toFixed(2),
+                    costValue: singleTicket.price,
+                    zones: singleTicket.zones,
+                    priceDescription: singleTicket.description,
+                    dayTicketCost: '€' + dayTicket.price.toFixed(2),
                     co2: (distance * emissionFactors.bus).toFixed(2) + ' kg',
                     co2Value: distance * emissionFactors.bus,
                     co2Level: 'low',
                     departure: calculateDepartureTime(arriveTime, distance / speedFactors.bus * 60),
-                    details: `Distance: ${distance.toFixed(1)} km. Regular service with stops.`,
+                    details: `Distance: ${distance.toFixed(1)} km. DING network service.`,
                     savings: `💚 Saves ${((distance * emissionFactors.car) - (distance * emissionFactors.bus)).toFixed(2)} kg CO₂ compared to driving`,
                     recommended: true,
-                    needsTicket: true
+                    needsTicket: true,
+                    transportMode: 'bus'
                 },
                 {
                     icon: '🚗',
@@ -739,7 +1052,8 @@
                     details: `Distance: ${distance.toFixed(1)} km. Includes fuel and parking costs.`,
                     savings: null,
                     recommended: false,
-                    needsTicket: false
+                    needsTicket: false,
+                    transportMode: 'car'
                 },
                 {
                     icon: '🚴',
@@ -755,11 +1069,11 @@
                     details: `Distance: ${distance.toFixed(1)} km. Great for fitness and environment!`,
                     savings: `🌱 Zero emissions! Saves ${(distance * emissionFactors.car).toFixed(2)} kg CO₂`,
                     recommended: distance < 10,
-                    needsTicket: false
+                    needsTicket: false,
+                    transportMode: 'bicycle'
                 }
             ];
 
-            // Add walking option if distance is reasonable
             if (distance < 8) {
                 routes.push({
                     icon: '🚶',
@@ -775,15 +1089,68 @@
                     details: `Distance: ${distance.toFixed(1)} km. Healthy and eco-friendly!`,
                     savings: `🌱 Zero emissions! Saves ${(distance * emissionFactors.car).toFixed(2)} kg CO₂`,
                     recommended: false,
-                    needsTicket: false
+                    needsTicket: false,
+                    transportMode: 'walking'
                 });
             }
 
-            // Sort routes based on priority
+            // Add Rideshare options
+            routes.push({
+                icon: '🚗',
+                name: 'Uber Rideshare',
+                time: Math.round(currentDuration + 5) + ' min',
+                timeValue: currentDuration + 5,
+                cost: 'Check Uber App',
+                costValue: distance * 1.5, // Estimated for sorting
+                co2: (distance * emissionFactors.car * 0.7).toFixed(2) + ' kg',
+                co2Value: distance * emissionFactors.car * 0.7,
+                co2Level: 'medium',
+                departure: calculateDepartureTime(arriveTime, currentDuration + 5),
+                details: `Distance: ${distance.toFixed(1)} km. On-demand ride service with flexible pickup.`,
+                savings: `🌍 Shared rides help reduce traffic congestion`,
+                recommended: false,
+                needsTicket: false,
+                isRideshare: true,
+                rideshareUrl: 'https://www.uber.com/de/de/',
+                transportMode: 'uber'
+            });
+
+            routes.push({
+                icon: '🚙',
+                name: 'BlaBlaCar Carpool',
+                time: Math.round(currentDuration + 10) + ' min',
+                timeValue: currentDuration + 10,
+                cost: 'Check BlaBlaCar',
+                costValue: distance * 0.5, // Estimated for sorting
+                co2: (distance * emissionFactors.car * 0.5).toFixed(2) + ' kg',
+                co2Value: distance * emissionFactors.car * 0.5,
+                co2Level: 'low',
+                departure: calculateDepartureTime(arriveTime, currentDuration + 10),
+                details: `Distance: ${distance.toFixed(1)} km. Affordable carpooling for longer distances.`,
+                savings: `💚 Carpooling reduces per-person emissions by sharing rides`,
+                recommended: distance > 20,
+                needsTicket: false,
+                isRideshare: true,
+                rideshareUrl: 'https://www.blablacar.de/',
+                transportMode: 'blablacar'
+            });
+
             const priority = document.getElementById('priority').value;
             sortRoutesByPriority(routes, priority);
 
-            // Display routes
+            // Store current route data
+            currentRouteData = {
+                origin: origin,
+                destination: destination,
+                distance: distance,
+                routes: routes,
+                timestamp: new Date().toISOString(),
+                carEmission: distance * emissionFactors.car
+            };
+
+            // Save search to history
+            saveSearchToHistory(currentRouteData);
+
             document.getElementById('loading').classList.remove('active');
             document.getElementById('searchBtn').disabled = false;
             displayRoutes(routes, origin, destination);
@@ -793,18 +1160,20 @@
             switch(priority) {
                 case 'time':
                     routes.sort((a, b) => a.timeValue - b.timeValue);
+                    routes.forEach(r => r.recommended = false);
                     routes[0].recommended = true;
                     break;
                 case 'cost':
                     routes.sort((a, b) => a.costValue - b.costValue);
+                    routes.forEach(r => r.recommended = false);
                     routes[0].recommended = true;
                     break;
                 case 'eco':
                     routes.sort((a, b) => a.co2Value - b.co2Value);
+                    routes.forEach(r => r.recommended = false);
                     routes[0].recommended = true;
                     break;
-                default: // balanced
-                    // Already set bus as recommended
+                default:
                     break;
             }
         }
@@ -841,6 +1210,17 @@
             const card = document.createElement('div');
             card.className = 'route-card' + (route.recommended ? ' recommended' : '');
             
+            let priceInfoHTML = '';
+            if (route.zones) {
+                priceInfoHTML = `
+                    <div class="price-info">
+                        <strong>DING Tariff:</strong> ${route.priceDescription}
+                        <span class="zone-indicator">${typeof route.zones === 'number' ? route.zones + ' Zone' + (route.zones > 1 ? 's' : '') : route.zones}</span>
+                        ${route.dayTicketCost ? `<br><em>Day ticket: ${route.dayTicketCost}</em>` : ''}
+                    </div>
+                `;
+            }
+            
             card.innerHTML = `
                 ${route.recommended ? '<div class="recommended-badge">✅ AI RECOMMENDED</div>' : ''}
                 
@@ -858,8 +1238,8 @@
                         <span>💰</span>
                         <span>${route.cost}</span>
                     </div>
-                    <div class="detail-item ${route.co2Level === 'high' ? 'co2-high' : 'co2-low'}">
-                        <span>${route.co2Level === 'high' ? '⚠️' : '🌍'}</span>
+                    <div class="detail-item ${route.co2Level === 'high' ? 'co2-high' : route.co2Level === 'medium' ? 'co2-medium' : 'co2-low'}">
+                        <span>${route.co2Level === 'high' ? '⚠️' : route.co2Level === 'medium' ? '🔶' : '🌍'}</span>
                         <span>${route.co2}</span>
                     </div>
                 </div>
@@ -869,56 +1249,263 @@
                     ${route.details}
                 </div>
 
+                ${priceInfoHTML}
+
                 ${route.savings ? `<div class="savings-badge">${route.savings}</div>` : ''}
 
                 ${route.needsTicket ? `
-                    <button class="book-btn" onclick='bookTicket(${JSON.stringify(route.name)}, ${JSON.stringify(route.departure)}, ${JSON.stringify(route.cost)}, ${JSON.stringify(origin)}, ${JSON.stringify(destination)})'>
-                        📱 Book Automatically with RPA
+                    <button class="book-btn" onclick='redirectToDING(${JSON.stringify(route)}, ${JSON.stringify(origin)}, ${JSON.stringify(destination)})'>
+                        🎫 Book on DING Website
                     </button>
-                ` : ''}
+                ` : route.isRideshare ? `
+                    <button class="book-btn secondary" onclick='openRideshareWebsite("${route.rideshareUrl}", ${JSON.stringify(route)})'>
+                        🚗 Check ${route.name}
+                    </button>
+                ` : `
+                    <button class="book-btn secondary" onclick='trackRouteChoice(${JSON.stringify(route)})'>
+                        ✅ Select This Route
+                    </button>
+                `}
             `;
 
             return card;
         }
 
-        function bookTicket(routeName, time, cost, origin, destination) {
-            // Open RPA modal
-            document.getElementById('rpaModal').classList.add('active');
-            document.getElementById('successMessage').classList.remove('active');
+        let currentJourneyDetails = null;
+
+        function redirectToDING(route, origin, destination) {
+            // Track the choice before showing modal
+            trackRouteChoice(route);
             
-            // Update ticket details
-            document.getElementById('ticketRoute').textContent = routeName;
-            document.getElementById('ticketTime').textContent = time;
-            document.getElementById('ticketPrice').textContent = cost;
-            document.getElementById('ticketOrigin').textContent = origin;
-            document.getElementById('ticketDestination').textContent = destination;
+            // Get the time values
+            const arriveTime = document.getElementById('arriveTime').value;
+            const [hours, minutes] = arriveTime.split(':');
+            
+            // Format date
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            
+            // Store journey details for later use
+            currentJourneyDetails = {
+                origin: origin,
+                destination: destination,
+                time: `${hours}:${minutes}`,
+                date: `${day}.${month}.${year}`,
+                price: route.cost,
+                zones: route.zones,
+                zoneDescription: route.priceDescription || `${route.zones} zones`
+            };
+            
+            // Populate modal
+            document.getElementById('modalOrigin').textContent = origin;
+            document.getElementById('modalDestination').textContent = destination;
+            document.getElementById('modalTime').textContent = `${hours}:${minutes}`;
+            document.getElementById('modalDate').textContent = `${day}.${month}.${year}`;
+            document.getElementById('modalPrice').textContent = route.cost;
+            document.getElementById('modalZones').textContent = currentJourneyDetails.zoneDescription;
+            
+            // Show modal
+            document.getElementById('journeyModal').classList.add('active');
+        }
 
-            // Reset steps
-            const steps = document.querySelectorAll('.rpa-step');
-            steps.forEach(step => step.classList.remove('active'));
+        function closeJourneyModal() {
+            document.getElementById('journeyModal').classList.remove('active');
+        }
 
-            // Animate RPA steps
-            steps.forEach((step, index) => {
-                setTimeout(() => {
-                    step.classList.add('active');
-                    step.style.animationDelay = `${index * 0.1}s`;
-                    
-                    // Show success after last step
-                    if (index === steps.length - 1) {
-                        setTimeout(() => {
-                            document.getElementById('successMessage').classList.add('active');
-                        }, 500);
-                    }
-                }, index * 800);
+        function openDINGWebsite() {
+            // Open DING trip planner
+            window.open('https://ding.eu/Fahrplanauskunft', '_blank');
+            
+            // Close modal after short delay
+            setTimeout(() => {
+                closeJourneyModal();
+            }, 500);
+        }
+
+        function openRideshareWebsite(url, route) {
+            // Track the choice
+            trackRouteChoice(route);
+            
+            // Open rideshare website in new tab
+            window.open(url, '_blank');
+        }
+
+        function trackRouteChoice(route) {
+            if (!currentRouteData) return;
+
+            // Calculate CO2 saved compared to car
+            const co2Saved = currentRouteData.carEmission - route.co2Value;
+            
+            // Update the specific search entry with chosen route
+            const history = getHistory();
+            if (history.length > 0) {
+                const lastEntry = history[history.length - 1];
+                lastEntry.chosenRoute = route.transportMode;
+                lastEntry.co2Saved = co2Saved > 0 ? co2Saved : 0;
+                lastEntry.chosenTime = new Date().toISOString();
+                saveHistory(history);
+                
+                // Update statistics display
+                loadStatistics();
+                
+                // Show success message
+                alert(`✅ Route selected!\n${co2Saved > 0 ? `You'll save ${co2Saved.toFixed(2)} kg of CO₂!` : 'Thank you for your choice!'}`);
+            }
+        }
+
+        // Storage functions
+        function getHistory() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function saveHistory(history) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+        }
+
+        function saveSearchToHistory(routeData) {
+            const history = getHistory();
+            
+            // Find recommended route
+            const recommendedRoute = routeData.routes.find(r => r.recommended);
+            const carRoute = routeData.routes.find(r => r.transportMode === 'car');
+            
+            const entry = {
+                timestamp: routeData.timestamp,
+                origin: routeData.origin,
+                destination: routeData.destination,
+                distance: routeData.distance,
+                recommendedRoute: recommendedRoute ? recommendedRoute.transportMode : null,
+                recommendedCO2: recommendedRoute ? recommendedRoute.co2Value : 0,
+                carCO2: carRoute ? carRoute.co2Value : routeData.carEmission,
+                potentialSavings: carRoute && recommendedRoute ? carRoute.co2Value - recommendedRoute.co2Value : 0,
+                chosenRoute: null,
+                co2Saved: 0
+            };
+            
+            history.push(entry);
+            
+            // Keep only last 50 entries
+            if (history.length > 50) {
+                history.shift();
+            }
+            
+            saveHistory(history);
+            loadStatistics();
+        }
+
+        function loadStatistics() {
+            const history = getHistory();
+            
+            if (history.length === 0) {
+                return;
+            }
+
+            // Show dashboard
+            document.getElementById('statsDashboard').classList.add('active');
+
+            // Calculate statistics
+            let totalSaved = 0;
+            let ecoChoices = 0;
+
+            history.forEach(entry => {
+                if (entry.co2Saved > 0) {
+                    totalSaved += entry.co2Saved;
+                    ecoChoices++;
+                }
+            });
+
+            // Update stats display
+            document.getElementById('totalSaved').textContent = totalSaved.toFixed(2) + ' kg';
+            document.getElementById('totalSearches').textContent = history.length;
+            document.getElementById('ecoChoices').textContent = ecoChoices;
+
+            // Display history
+            displayHistory(history);
+        }
+
+        function displayHistory(history) {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+
+            if (history.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; color: #666;">No journey history yet. Start planning your first trip!</p>';
+                return;
+            }
+
+            // Show most recent first
+            const recentHistory = [...history].reverse().slice(0, 10);
+
+            recentHistory.forEach(entry => {
+                const item = document.createElement('div');
+                item.className = 'history-item' + (entry.chosenRoute === 'car' ? ' car-route' : '');
+                
+                const date = new Date(entry.timestamp);
+                const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                item.innerHTML = `
+                    <div class="history-date">${dateStr}</div>
+                    <div class="history-details">
+                        <div><strong>From:</strong> ${entry.origin}</div>
+                        <div><strong>To:</strong> ${entry.destination}</div>
+                        <div><strong>Distance:</strong> ${entry.distance.toFixed(1)} km</div>
+                        <div><strong>Recommended:</strong> ${entry.recommendedRoute || 'N/A'}</div>
+                        ${entry.chosenRoute ? `
+                            <div><strong>You chose:</strong> ${entry.chosenRoute}</div>
+                            <div style="color: ${entry.co2Saved > 0 ? '#4CAF50' : '#f44336'}; font-weight: 600;">
+                                ${entry.co2Saved > 0 ? `✅ Saved ${entry.co2Saved.toFixed(2)} kg CO₂` : '⚠️ No savings'}
+                            </div>
+                        ` : '<div style="color: #999;">Route not selected yet</div>'}
+                    </div>
+                `;
+                
+                historyList.appendChild(item);
             });
         }
 
-        function closeRPAModal() {
-            document.getElementById('rpaModal').classList.remove('active');
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all journey history? This cannot be undone.')) {
+                localStorage.removeItem(STORAGE_KEY);
+                loadStatistics();
+                document.getElementById('statsDashboard').classList.remove('active');
+                alert('✅ History cleared successfully!');
+            }
+        }
+
+        function exportData() {
+            const history = getHistory();
+            
+            if (history.length === 0) {
+                alert('No data to export!');
+                return;
+            }
+
+            // Create CSV content
+            let csv = 'Date,Origin,Destination,Distance (km),Recommended Route,Recommended CO2 (kg),Car CO2 (kg),Potential Savings (kg),Chosen Route,Actual CO2 Saved (kg)\n';
+            
+            history.forEach(entry => {
+                const date = new Date(entry.timestamp).toLocaleString();
+                csv += `"${date}","${entry.origin}","${entry.destination}",${entry.distance.toFixed(2)},${entry.recommendedRoute || ''},${entry.recommendedCO2.toFixed(2)},${entry.carCO2.toFixed(2)},${entry.potentialSavings.toFixed(2)},${entry.chosenRoute || ''},${entry.co2Saved.toFixed(2)}\n`;
+            });
+
+            // Create download link
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ding-mobility-data-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            alert('✅ Data exported successfully!');
         }
     </script>
 
-    <!-- IMPORTANT: Replace YOUR_API_KEY with your actual Google Maps API key -->
+    <!-- Replace with your actual Google Maps API key -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRlHxz1cBfuhbj33_c4TURs6A3ZPpBioE&libraries=places&callback=initMap" async defer></script>
 </body>
 </html>
